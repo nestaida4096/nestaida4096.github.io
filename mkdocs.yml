@@ -1,0 +1,27 @@
+site_name: ねすと
+site_url: https://nestaida4096.github.io
+theme:
+  name: material
+  language: ja 
+  features:
+    - navigation.sections
+  logo: logo.png
+  favicon: favicon.png
+
+extra:
+  social:
+    - icon: fontawesome/brands/x-twitter 
+      link: https://x.com/NESTAIDA59277
+    - icon: fontawesome/brands/discord 
+      link: https://discord.gg/UPNafXFqz6
+
+plugins:
+  - tags:
+  - search:
+      enabled: false
+
+features:
+  - navigation.instant
+  - navigation.instant.progress
+  
+copyright: © 2026 ねすと(NEST)
