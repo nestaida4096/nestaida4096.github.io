@@ -5,15 +5,16 @@ theme:
   language: ja 
   features:
     - navigation.sections
+    - navigation.tabs
   logo: logo.png
   favicon: favicon.png
 
+extra_css:
+  - stylesheets/extra.css
 extra:
   social:
     - icon: fontawesome/brands/x-twitter 
       link: https://x.com/NESTAIDA59277
-    - icon: fontawesome/brands/discord 
-      link: https://discord.gg/UPNafXFqz6
 
 plugins:
   - tags:
