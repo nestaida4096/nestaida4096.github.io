@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebCTC Map Ultimate</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body, html { margin: 0; padding: 0; height: 100%; background: #0f172a; color: #f8fafc; font-family: sans-serif; }
+        #map { width: 100%; height: 100vh; background: #020617; }
+
+        .leaflet-container { background: #020617 !important; }
+        .leaflet-popup-content-wrapper { background: #1e293b; color: #f8fafc; border: 1px solid #334155; border-radius: 8px; }
+        .leaflet-popup-tip { background: #1e293b; }
+
+        .segment-label {
+          background: rgba(251, 191, 36, 0.9);
+          color: #000;
+          border: 1px solid #000;
+          border-radius: 4px;
+          padding: 1px 4px;
+          font-size: 10px;
+          font-weight: bold;
+          text-align: center;
+          white-space: nowrap;
+        }
+        .segment-label-highlight {
+          background: #60a5fa !important;
+          color: white !important;
+          transform: scale(1.3);
+          z-index: 1000 !important;
+        }
+
+        .side-panel {
+          position: absolute;
+          top: 20px;
+          left: 20px;
+          z-index: 1000;
+          background: rgba(30, 41, 59, 0.9);
+          backdrop-filter: blur(8px);
+          padding: 16px;
+          border-radius: 12px;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          width: 360px;
+          max-height: 90vh;
+          overflow-y: auto;
+        }
+
+        .input-group { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+
+        input[type="number"], input[type="text"], select {
+          background: #0f172a;
+          border: 1px solid #475569;
+          color: white;
+          padding: 4px 8px;
+          border-radius: 4px;
+          width: 100%;
+          outline: none;
+          font-size: 0.75rem;
+        }
+
+        .badge { padding: 2px 8px; border-radius: 999px; font-size: 0.75rem; font-weight: bold; }
+        .badge-online { background: #10b981; color: #064e3b; }
+        .badge-offline { background: #ef4444; color: #450a0a; }
+
+        .route-item {
+          background: #334155;
+          margin-top: 8px;
+          padding: 10px;
+          border-radius: 6px;
+          font-size: 0.75rem;
+          border-left: 4px solid #fbbf24;
+          transition: all 0.2s;
+        }
+        .route-item.highlighted { background: #475569; border-left-color: #60a5fa; transform: translateX(4px); }
+
+        .waypoint-badge {
+          display: inline-block;
+          background: #1e293b;
+          color: #10b981;
+          border: 1px solid #10b981;
+          padding: 1px 6px;
+          border-radius: 4px;
+          margin-right: 4px;
+          margin-bottom: 4px;
+          font-size: 10px;
+        }
+
+        .apply-bulk-btn {
+          background: #6366f1;
+          color: white;
+          border-radius: 4px;
+          padding: 6px 8px;
+          font-size: 11px;
+          font-weight: bold;
+          margin-top: 8px;
+          width: 100%;
+          transition: background 0.2s;
+        }
+        .apply-bulk-btn:hover { background: #4f46e5; }
+
+        .boundary-btn {
+          background: #475569;
+          color: white;
+          border-radius: 4px;
+          padding: 6px 8px;
+          font-size: 11px;
+          margin-top: 4px;
+          width: 100%;
+          border: 1px solid #64748b;
+        }
+        .boundary-btn.active { background: #e11d48; border-color: #fb7185; }
+    </style>
+</head>
+<body>
+
+<script>
+  function alert(message) {
+    Swal.fire({
+      text: message, 
+      showConfirmButton: false, 
+      timer: 4000, 
+      timerProgressBar: true, 
+      toast: true,
+      position: 'top-end',
+      background: '#1e293b',
+      color: '#f8fafc',
+      showClass: { popup: `` },
+      hideClass: { popup: `` }
+    });
+  }
+</script>
+
+<div class="side-panel">
+    <div class="flex justify-between items-center mb-4">
+        <h1 class="text-lg font-bold text-blue-400">WebCTC Map</h1>
+        <div id="connection-status" class="badge badge-offline">OFFLINE</div>
+    </div>
+
+    <div class="input-group">
+        <label class="text-xs font-medium shrink-0">World Index:</label>
+        <input type="number" id="world-index" value="0" min="0" onchange="resetMapAndReload()">
+    </div>
+
+    <div class="border-t border-slate-700 my-3 pt-3">
+        <div class="flex justify-between items-center mb-2">
+            <h2 class="text-sm font-bold text-yellow-500">経路作成 (Node Base)</h2>
+            <div class="flex gap-1">
+                <label class="cursor-pointer bg-slate-700 hover:bg-slate-600 text-[10px] py-1 px-2 rounded border border-slate-500 transition-colors">
+                    読み込み
+                    <input type="file" id="json-input" class="hidden" accept=".json" onchange="importRouteJSON(event)">
+                </label>
+                <button onclick="exportRouteJSON()" id="export-btn" class="bg-slate-700 hover:bg-slate-600 text-[10px] py-1 px-2 rounded border border-slate-500 transition-colors disabled:opacity-30" disabled>
+                    書き出し
+                </button>
+            </div>
+        </div>
+        
+        <div id="selection-status" class="text-[11px] text-slate-400 mb-2">レールの端を順に選択してください</div>
+        <div id="waypoints-display" class="mb-2 flex flex-wrap"></div>
+
+        <div class="flex flex-col gap-2 mb-3">
+            <button onclick="toggleRouteMode()" id="route-mode-btn" class="bg-blue-600 hover:bg-blue-500 text-white text-xs py-2 px-3 rounded w-full">地点選択を開始</button>
+            <div class="flex gap-2">
+                <button onclick="generatePathFromNodes()" id="generate-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs py-2 px-3 rounded flex-1 disabled:opacity-50" disabled>経路確定</button>
+                <button onclick="clearRoute()" class="bg-slate-700 hover:bg-slate-600 text-white text-xs py-2 px-3 rounded">リセット</button>
+            </div>
+        </div>
+
+        <div id="route-list" class="space-y-2 max-h-48 overflow-y-auto mt-2 pr-1"></div>
+
+        <div class="border-t border-slate-700 mt-4 pt-3">
+            <h2 class="text-sm font-bold mb-2 text-green-400">転送・適用</h2>
+            <select id="target-train" class="mb-3 text-xs">
+                <option value="">選択してください</option>
+            </select>
+            <button id="send-btn" onclick="sendRouteData()" class="bg-green-600 hover:bg-green-500 text-white text-sm font-bold py-2 px-4 rounded w-full disabled:opacity-50" disabled>サーバーへ転送して保存</button>
+        </div>
+        
+        <div class="mt-4 p-2 bg-slate-800/50 rounded border border-slate-700 text-[10px] text-slate-400">
+            <p>※地図上のレールをクリックして「境界設定」や「一斉反映」が可能です。</p>
+        </div>
+    </div>
+</div>
+
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    const CONFIG = {
+      baseUrl: "http://192.168.11.48:52753",
+      refreshInterval: 1000
+    };
+
+    let latestMapData = null;
+    let trainDataCache = null;
+    let worldIndex = 0;
+    let initialized = false;
+
+    const railLayers = new Map(); 
+    const nodeLayers = new Map(); 
+    const railGeomToIds = new Map(); 
+    const railClickIndex = new Map();
+    const xzToFullCoords = new Map();
+    const boundaryRails = new Set();
+
+    let isRouteMode = false;
+    let waypointCoords = [];
+    let selectedRoute = []; 
+    let routeLabels = []; 
+    let currentOpenRailId = null;
+    let hoveredRouteIndex = null;
+
+    const map = L.map('map', { crs: L.CRS.Simple, minZoom: -5, zoomSnap: 0.5 });
+    map.setView([0, 0], 0);
+
+    // --- Data Fetching ---
+
+    async function fetchTrainData() {
+      try {
+        const res = await fetch(`${CONFIG.baseUrl}/trainPositions`);
+        if (!res.ok) throw new Error();
+        trainDataCache = await res.json();
+        updateTargetTrainList();
+        updateActivePopup();
+      } catch (e) { console.error("Train fetch failed", e); }
+    }
+
+    function updateTargetTrainList() {
+        if (!trainDataCache || !trainDataCache.trainPositions) return;
+        const select = document.getElementById('target-train');
+        const currentVal = select.value;
+        const saveOnly = select.options[0];
+        select.innerHTML = '';
+        select.appendChild(saveOnly);
+
+        const trainIds = Object.keys(trainDataCache.trainPositions);
+        trainIds.sort((a, b) => BigInt(a) < BigInt(b) ? -1 : 1).forEach(id => {
+            const opt = document.createElement('option');
+            opt.value = id;
+            let next = "";
+            if (trainDataCache.trainsNextStation?.[id]) next = " -> " + trainDataCache.trainsNextStation[id][0].split('|')[0];
+            let speed = "";
+            if (trainDataCache.trainsSpeed?.[id]) speed = ` (${trainDataCache.trainsSpeed[id][0].toFixed(1)}km/h)`;
+            opt.textContent = `${id}${next}${speed}`;
+            select.appendChild(opt);
+        });
+        if (currentVal && trainIds.includes(currentVal)) select.value = currentVal;
+    }
+
+    async function fetchWorldData() {
+      const statusBadge = document.getElementById('connection-status');
+      try {
+        const res = await fetch(`${CONFIG.baseUrl}/webctcAPI?worldIndex=${worldIndex}`);
+        const data = await res.json();
+        latestMapData = data;
+        statusBadge.textContent = "ONLINE";
+        statusBadge.className = "badge badge-online";
+        render(data);
+      } catch (e) {
+        statusBadge.textContent = "OFFLINE";
+        statusBadge.className = "badge badge-offline";
+      }
+    }
+
+    // --- Rendering ---
+
+    function render(data) {
+      if (!data) return;
+      const occupiedSet = new Set(Object.keys(data.railOccupiedData));
+      const routeRailKeys = new Set(selectedRoute.map(r => `${r.startingPos.join(',')}|${r.endingPos.join(',')}`));
+      const hoveredRailKey = hoveredRouteIndex !== null ? `${selectedRoute[hoveredRouteIndex].startingPos.join(',')}|${selectedRoute[hoveredRouteIndex].endingPos.join(',')}` : null;
+      const hoveredReverseKey = hoveredRouteIndex !== null ? `${selectedRoute[hoveredRouteIndex].endingPos.join(',')}|${selectedRoute[hoveredRouteIndex].startingPos.join(',')}` : null;
+      const bounds = [];
+      const activeNodeKeys = new Set(waypointCoords.map(c => { const p = c.split(','); return `${p[0]},${p[2]}`; }));
+      
+      railGeomToIds.clear();
+      xzToFullCoords.clear();
+
+      for (const [id, pos] of Object.entries(data.railData)) {
+        const [x1, y1, z1, x2, y2, z2] = pos;
+        const p1 = [-z1, x1], p2 = [-z2, x2];
+        const coordA_XZ = `${x1},${z1}`, coordB_XZ = `${x2},${z2}`;
+        const geomKey = [coordA_XZ, coordB_XZ].sort().join('||');
+        
+        if (!railGeomToIds.has(geomKey)) railGeomToIds.set(geomKey, []);
+        railGeomToIds.get(geomKey).push(id);
+
+        if (!xzToFullCoords.has(coordA_XZ)) xzToFullCoords.set(coordA_XZ, new Set());
+        if (!xzToFullCoords.has(coordB_XZ)) xzToFullCoords.set(coordB_XZ, new Set());
+        xzToFullCoords.get(coordA_XZ).add(`${x1},${y1},${z1}`);
+        xzToFullCoords.get(coordB_XZ).add(`${x2},${y2},${z2}`);
+
+        if (!railLayers.has(id)) {
+          const line = L.polyline([p1, p2], { weight: 2 }).addTo(map);
+          line.on('click', (e) => { if (!isRouteMode) { L.DomEvent.stopPropagation(e); onRailGroupClick(geomKey); } });
+          railLayers.set(id, line);
+          bounds.push(p1, p2);
+        }
+
+        const line = railLayers.get(id);
+        const isOccupied = occupiedSet.has(id);
+        const isBoundary = boundaryRails.has(id);
+        const railKey = `${x1},${y1},${z1}|${x2},${y2},${z2}`;
+        const isInRoute = routeRailKeys.has(railKey) || routeRailKeys.has(`${x2},${y2},${z2}|${x1},${y1},${z1}`);
+        const isHovered = (hoveredRailKey === railKey || hoveredReverseKey === railKey || hoveredRailKey === `${x2},${y2},${z2}|${x1},${y1},${z1}` || hoveredReverseKey === `${x2},${y2},${z2}|${x1},${y1},${z1}`);
+
+        const idsInGeom = railGeomToIds.get(geomKey);
+        const isActiveInStack = !currentOpenRailId || !idsInGeom.includes(currentOpenRailId) || currentOpenRailId === id;
+
+        if (isHovered) {
+          line.setStyle({ color: '#60a5fa', weight: 12, opacity: 1 }).bringToFront();
+        } else if (isInRoute) { 
+          line.setStyle({ color: '#fbbf24', weight: 8, opacity: 1 }).bringToFront(); 
+        } else if (isBoundary) {
+          line.setStyle({ color: '#fff', weight: 10, opacity: 1 }).bringToFront();
+        } else {
+          line.setStyle({ color: isOccupied ? '#ff4444' : '#475569', weight: isOccupied ? 6 : 2, opacity: isActiveInStack ? (isOccupied ? 1.0 : 0.5) : 0.05 });
+          if (isOccupied) line.bringToFront();
+        }
+      }
+
+      xzToFullCoords.forEach((_, xzKey) => {
+        if (!nodeLayers.has(xzKey)) {
+          const [x, z] = xzKey.split(',').map(Number);
+          const m = L.circleMarker([-z, x], { radius: 4, fillColor: '#1e293b', color: '#64748b', weight: 1 }).addTo(map);
+          m.on('click', (e) => { L.DomEvent.stopPropagation(e); onNodeClick(xzKey, m); });
+          nodeLayers.set(xzKey, m);
+        }
+        const active = activeNodeKeys.has(xzKey);
+        nodeLayers.get(xzKey).setStyle({ radius: active ? 8 : 4, fillColor: active ? '#10b981' : '#1e293b', color: active ? '#fff' : '#64748b' });
+      });
+
+      updateRouteMapLabels();
+      if (!initialized && bounds.length > 0) { map.fitBounds(bounds, { padding: [50, 50] }); initialized = true; }
+    }
+
+    // --- JSON Logic (復活分) ---
+
+    window.importRouteJSON = function(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const data = JSON.parse(e.target.result);
+                selectedRoute = data.map(item => ({
+                    startingPos: item.startingPos, endingPos: item.endingPos,
+                    dwellTime: item.dwellTime || 0, savedRailBaseId: item.savedRailBaseId || ""
+                }));
+                waypointCoords = [];
+                if (selectedRoute.length > 0) {
+                    waypointCoords.push(selectedRoute[0].startingPos.join(','));
+                    selectedRoute.forEach(r => waypointCoords.push(r.endingPos.join(',')));
+                }
+                isRouteMode = false; updateRouteUI(); updateStatus(); render(latestMapData);
+                alert(`${selectedRoute.length}件の経路を読込完了`);
+            } catch (err) { alert("JSON読込失敗"); }
+        };
+        reader.readAsText(file);
+    };
+
+    window.exportRouteJSON = function() {
+        if (selectedRoute.length === 0) return;
+        const blob = new Blob([JSON.stringify(selectedRoute, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = `route_${Date.now()}.json`;
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    };
+
+    // --- Rail Interactions ---
+
+    function onRailGroupClick(geomKey) {
+      const ids = railGeomToIds.get(geomKey);
+      if (!ids) return;
+      let idx = railClickIndex.get(geomKey) || 0;
+      currentOpenRailId = ids[idx % ids.length];
+      railClickIndex.set(geomKey, idx + 1);
+      railLayers.get(currentOpenRailId).bindPopup(generatePopupContent(currentOpenRailId)).openPopup();
+      render(latestMapData);
+    }
+
+    function onNodeClick(xzKey, marker) { 
+      if (!isRouteMode) return; 
+      const fullCoords = Array.from(xzToFullCoords.get(xzKey));
+      if (fullCoords.length > 1) {
+        let c = `<div class="text-xs font-bold mb-2 text-blue-400">高さ(Y)を選択</div>`;
+        fullCoords.forEach(f => c += `<button class="bg-slate-700 hover:bg-slate-600 text-white w-full p-2 rounded mb-1 text-[10px]" onclick="addWaypoint('${f}')">Y: ${f.split(',')[1]}</button>`);
+        marker.bindPopup(c).openPopup();
+      } else { addWaypoint(fullCoords[0]); }
+    }
+
+    window.addWaypoint = (c) => { waypointCoords.push(c); map.closePopup(); updateStatus(); render(latestMapData); };
+
+    function generatePathFromNodes() {
+      if (waypointCoords.length < 2) return;
+      const graph = {};
+      for (const [id, pos] of Object.entries(latestMapData.railData)) {
+        const k1 = `${pos[0]},${pos[1]},${pos[2]}`, k2 = `${pos[3]},${pos[4]},${pos[5]}`;
+        if (!graph[k1]) graph[k1] = []; if (!graph[k2]) graph[k2] = [];
+        const d = Math.sqrt(Math.pow(pos[0]-pos[3],2)+Math.pow(pos[1]-pos[4],2)+Math.pow(pos[2]-pos[5],2));
+        graph[k1].push({to:k2, w:d}); graph[k2].push({to:k1, w:d});
+      }
+      let fullPath = [];
+      for (let i=0; i<waypointCoords.length-1; i++){
+        const seg = calculatePath(waypointCoords[i], waypointCoords[i+1], graph);
+        if(!seg) { alert("経路が見つかりません"); return; }
+        if(i>0) seg.shift(); fullPath = fullPath.concat(seg);
+      }
+      selectedRoute = fullPath.slice(0,-1).map((p,i)=>({ startingPos: p.split(',').map(Number), endingPos: fullPath[i+1].split(',').map(Number), dwellTime: 0, savedRailBaseId: "" }));
+      isRouteMode = false; updateRouteUI(); updateStatus(); render(latestMapData);
+    }
+
+    function calculatePath(s, e, g) {
+      const ds = {}, ps = {}, q = new Set(Object.keys(g));
+      for (const n of q) ds[n] = Infinity; ds[s] = 0;
+      while (q.size > 0) {
+        let u = null; for (const n of q) if (!u || ds[n] < ds[u]) u = n;
+        if (ds[u] === Infinity || u === e) break; q.delete(u);
+        for (const edge of g[u]) {
+          const alt = ds[u] + edge.w;
+          if (alt < ds[edge.to]) { ds[edge.to] = alt; ps[edge.to] = u; }
+        }
+      }
+      const path = []; let c = e;
+      if (ps[c] || c === s) { while (c) { path.unshift(c); c = ps[c]; } return path; }
+      return null;
+    }
+
+    // --- Bulk Apply with Boundary Control ---
+
+    async function applyToConnectedTrains(startRailId) {
+        if (selectedRoute.length === 0) return alert("まず経路を作成してください。");
+        const nodeToRails = new Map();
+        for (const [id, pos] of Object.entries(latestMapData.railData)) {
+            const p1 = `${pos[0]},${pos[1]},${pos[2]}`, p2 = `${pos[3]},${pos[4]},${pos[5]}`;
+            if (!nodeToRails.has(p1)) nodeToRails.set(p1, []); if (!nodeToRails.has(p2)) nodeToRails.set(p2, []);
+            nodeToRails.get(p1).push(id); nodeToRails.get(p2).push(id);
+        }
+
+        const connected = new Set(), queue = [startRailId]; connected.add(startRailId);
+        while (queue.length > 0) {
+            const cur = queue.shift();
+            if (boundaryRails.has(cur)) continue;
+            const p = latestMapData.railData[cur]; if (!p) continue;
+            [`${p[0]},${p[1]},${p[2]}`, `${p[3]},${p[4]},${p[5]}`].forEach(ep => {
+                (nodeToRails.get(ep) || []).forEach(nId => {
+                    if (!connected.has(nId)) { connected.add(nId); queue.push(nId); }
+                });
+            });
+        }
+
+        const trains = new Set();
+        connected.forEach(id => { if (latestMapData.railOccupiedData[id]) trains.add(latestMapData.railOccupiedData[id]); });
+        if (trains.size === 0) return alert("範囲内に列車がいません。");
+
+        const pathId = await sendRouteData(true);
+        if (!pathId) return;
+
+        let success = 0;
+        for (const tid of trains) {
+            const res = await fetch(`${CONFIG.baseUrl}/replacePathData?trainId=${tid}&pathId=${pathId}`);
+            if (res.ok) success++;
+        }
+        alert(`一斉反映完了: ${Array.from(trains).join(', ')} (${success}台)`);
+    }
+
+    window.toggleBoundary = (id) => {
+        if (boundaryRails.has(id)) boundaryRails.delete(id); else boundaryRails.add(id);
+        map.closePopup(); render(latestMapData);
+    };
+
+    function generatePopupContent(id) {
+      const tid = latestMapData.railOccupiedData[id];
+      const isB = boundaryRails.has(id);
+      const geomKey = [`${latestMapData.railData[id][0]},${latestMapData.railData[id][2]}`, `${latestMapData.railData[id][3]},${latestMapData.railData[id][5]}`].sort().join('||');
+      const count = railGeomToIds.get(geomKey).length;
+      return `
+        <div class="p-2 space-y-2">
+          <div class="text-[9px] text-slate-500">ID: ${id} ${count > 1 ? `(重なり:${count}本)` : ''}</div>
+          ${tid ? `<div class="text-red-400 font-bold text-xs">列車: ${tid}</div>` : ''}
+          <div class="flex flex-col gap-1">
+            <button onclick="toggleBoundary('${id}')" class="boundary-btn ${isB ? 'active' : ''}">
+              ${isB ? '境界を解除' : 'ここを探索境界に設定'}
+            </button>
+            ${selectedRoute.length > 0 ? `<button onclick="applyToConnectedTrains('${id}')" class="apply-bulk-btn">接続先の全列車に反映</button>` : ''}
+          </div>
+        </div>`;
+    }
+
+    // --- UI Logic ---
+
+    function toggleRouteMode() {
+      isRouteMode = !isRouteMode;
+      const b = document.getElementById('route-mode-btn');
+      b.textContent = isRouteMode ? "地点選択をキャンセル" : "地点選択を開始";
+      b.className = isRouteMode ? "bg-red-600 text-white text-xs py-2 px-3 rounded w-full" : "bg-blue-600 text-white text-xs py-2 px-3 rounded w-full";
+      if(isRouteMode) { waypointCoords = []; selectedRoute = []; }
+      updateStatus(); render(latestMapData);
+    }
+
+    function updateStatus() {
+      const g = document.getElementById('generate-btn'), w = document.getElementById('waypoints-display');
+      w.innerHTML = waypointCoords.map((c, i) => `<span class="waypoint-badge">${i==0?'始':i==waypointCoords.length-1?'終':'経'}: ${c.split(',')[0]}</span>`).join('');
+      g.disabled = waypointCoords.length < 2;
+    }
+
+    function updateRouteUI() {
+      const c = document.getElementById('route-list'); c.innerHTML = "";
+      selectedRoute.forEach((item, index) => {
+        const d = document.createElement('div'); d.className = "route-item";
+        d.onmouseenter = () => { hoveredRouteIndex = index; render(latestMapData); };
+        d.onmouseleave = () => { hoveredRouteIndex = null; render(latestMapData); };
+        d.innerHTML = `<div class="text-[10px] font-bold text-blue-400">#${index+1}</div><input type="text" value="${item.savedRailBaseId}" onchange="selectedRoute[${index}].savedRailBaseId=this.value" placeholder="Rail Base ID" class="mb-1"><input type="number" value="${item.dwellTime}" onchange="selectedRoute[${index}].dwellTime=parseInt(this.value)" class="w-16">`;
+        c.appendChild(d);
+      });
+      document.getElementById('send-btn').disabled = selectedRoute.length === 0;
+      document.getElementById('export-btn').disabled = selectedRoute.length === 0;
+    }
+
+    function updateRouteMapLabels() {
+      routeLabels.forEach(l => map.removeLayer(l)); routeLabels = [];
+      selectedRoute.forEach((item, index) => {
+        const midX = (item.startingPos[0] + item.endingPos[0])/2, midZ = (item.startingPos[2] + item.endingPos[2])/2;
+        const l = L.marker([-midZ, midX], { icon: L.divIcon({ html: `<div class="${hoveredRouteIndex === index ? "segment-label segment-label-highlight" : "segment-label"}">#${index+1}</div>`, iconSize:[30,20] }), interactive:false }).addTo(map);
+        routeLabels.push(l);
+      });
+    }
+
+    async function sendRouteData(silent = false) {
+      if (selectedRoute.length === 0) return null;
+      const tid = document.getElementById('target-train').value;
+      try {
+        const res = await fetch(`${CONFIG.baseUrl}/savePath?worldIndex=${worldIndex}`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(selectedRoute) });
+        const text = await res.text();
+        const id = text.match(/"id"\s*:\s*(-?\d+)/)?.[1];
+        if (silent) return id;
+        if (tid && id) await fetch(`${CONFIG.baseUrl}/replacePathData?trainId=${tid}&pathId=${id}`);
+        alert(`保存完了 (Path ID: ${id})`); clearRoute(); return id;
+      } catch(e) { alert("Error"); return null; }
+    }
+
+    function clearRoute() { selectedRoute=[]; waypointCoords=[]; isRouteMode=false; updateRouteUI(); updateStatus(); render(latestMapData); }
+    function resetMapAndReload() { worldIndex = document.getElementById('world-index').value; railLayers.forEach(l => map.removeLayer(l)); railLayers.clear(); initialized=false; fetchWorldData(); }
+    function updateActivePopup() { if(currentOpenRailId && railLayers.has(currentOpenRailId)){ const l = railLayers.get(currentOpenRailId); if(l.getPopup()?.isOpen()) l.setPopupContent(generatePopupContent(currentOpenRailId)); } }
+
+    setInterval(fetchTrainData, CONFIG.refreshInterval);
+    (async function loop() { await fetchWorldData(); setTimeout(loop, CONFIG.refreshInterval); })();
+    window.onload = () => { fetchTrainData(); };
+</script>
+</body>
+</html>
