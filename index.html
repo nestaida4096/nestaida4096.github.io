@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10100f">
+  <meta name="description" content="Oyama142859 — student, Minecraft developer, and member of the Minecraft Transit Railway community in Japan.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Oyama142859 — Independent Creator">
+  <meta property="og:description" content="Exploring code, Minecraft, and the systems that connect them.">
+  <title>Oyama142859 — Independent Creator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Noto+Serif+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #10100f;
+      --surface: #171715;
+      --text: #e9e5dc;
+      --muted: #96938b;
+      --line: rgba(233,229,220,.14);
+      --accent: #c6ad83;
+      --serif: "Cormorant Garamond", "Noto Serif JP", Georgia, serif;
+      --jp-serif: "Noto Serif JP", serif;
+      --sans: "Noto Serif JP", Georgia, serif;
+      --page: 1180px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 100px; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(ellipse at 78% 12%, rgba(198,173,131,.075), transparent 34rem),
+        var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-weight: 400;
+      line-height: 1.8;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    a:focus-visible { outline: 1px solid var(--accent); outline-offset: 5px; }
+    .wrap { width: min(var(--page), calc(100% - 64px)); margin-inline: auto; }
+    .site-header {
+      position: sticky; top: 0; z-index: 10;
+      border-bottom: 1px solid var(--line);
+      background: rgba(16,16,15,.82);
+      backdrop-filter: blur(18px);
+    }
+    .nav {
+      min-height: 76px; display: flex; align-items: center;
+      justify-content: space-between; gap: 24px;
+    }
+    .brand { font: 600 25px/1 var(--serif); letter-spacing: .035em; }
+    .brand span { color: var(--accent); }
+    .nav-links { display: flex; align-items: center; gap: clamp(20px, 4vw, 48px); }
+    .nav-links a {
+      color: var(--muted); font: 500 11px/1.4 var(--jp-serif);
+      letter-spacing: .16em; text-transform: uppercase; transition: color .2s ease;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--text); }
+    .nav-links .contact-link { color: var(--accent); }
+    .hero {
+      min-height: min(790px, calc(100svh - 76px));
+      display: grid; align-items: center; position: relative;
+      border-bottom: 1px solid var(--line); overflow: hidden;
+    }
+    .hero::after {
+      content: ""; position: absolute; width: min(54vw, 660px); aspect-ratio: 1;
+      right: -8%; top: 50%; transform: translateY(-50%);
+      border: 1px solid rgba(198,173,131,.15); border-radius: 50%;
+      box-shadow: 0 0 0 70px rgba(198,173,131,.018), 0 0 0 140px rgba(198,173,131,.014);
+      pointer-events: none;
+    }
+    .hero-inner { position: relative; z-index: 1; padding-block: 110px 130px; }
+    .eyebrow {
+      display: flex; align-items: center; gap: 14px; margin: 0 0 28px;
+      color: var(--accent); font: 500 11px/1.5 var(--jp-serif);
+      letter-spacing: .22em; text-transform: uppercase;
+    }
+    .eyebrow::before { content: ""; width: 34px; height: 1px; background: var(--accent); }
+    h1 {
+      max-width: 900px; margin: 0;
+      font: 400 clamp(66px, 10vw, 142px)/.92 var(--serif);
+      letter-spacing: -.045em;
+    }
+    h1 span { display: block; color: var(--accent); font-style: italic; }
+    .hero-copy {
+      max-width: 510px; margin: 38px 0 0; color: #b5b0a6;
+      font: 400 clamp(14px, 1.35vw, 16px)/2.1 var(--jp-serif);
+    }
+    .hero-bottom {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 24px; margin-top: 82px;
+    }
+    .scroll-note { color: var(--muted); font: 10px var(--jp-serif); letter-spacing: .2em; text-transform: uppercase; }
+    .scroll-note::after { content: "  ↓"; color: var(--accent); }
+    .location { color: var(--muted); font: 11px var(--jp-serif); letter-spacing: .12em; }
+    section.content-section { padding-block: clamp(100px, 13vw, 176px); border-bottom: 1px solid var(--line); }
+    .section-head {
+      display: grid; grid-template-columns: 1fr 2fr; gap: 40px;
+      align-items: start; margin-bottom: 76px;
+    }
+    .section-index { color: var(--accent); font: 500 12px var(--serif); letter-spacing: .16em; }
+    h2 { margin: 0; font: 400 clamp(43px, 6vw, 76px)/1 var(--serif); letter-spacing: -.025em; }
+    .section-intro { max-width: 590px; margin: 25px 0 0; color: var(--muted); font: 400 14px/2.1 var(--jp-serif); }
+    .capabilities { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--line); }
+    .capability { padding: 34px 30px 20px 0; min-height: 265px; }
+    .capability + .capability { border-left: 1px solid var(--line); padding-left: 30px; }
+    .cap-number { color: var(--accent); font: 500 13px var(--serif); }
+    h3 { margin: 35px 0 15px; font: 500 29px/1.15 var(--serif); }
+    .capability p { max-width: 310px; margin: 0; color: var(--muted); font: 400 13px/2.05 var(--jp-serif); }
+    .statement {
+      margin-top: 100px; padding: 48px 0 0; border-top: 1px solid var(--line);
+      display: grid; grid-template-columns: 1fr 2fr; gap: 40px;
+    }
+    .statement-label { color: var(--accent); font: 11px var(--jp-serif); letter-spacing: .18em; text-transform: uppercase; }
+    .statement p { max-width: 700px; margin: 0; font: 400 clamp(23px, 3vw, 36px)/1.55 var(--serif); color: #d8d1c5; }
+    .footer { padding-block: 38px; }
+    .footer-inner { display: flex; justify-content: space-between; align-items: center; gap: 24px; }
+    .footer-brand { font: 500 22px var(--serif); }
+    .footer-meta { color: var(--muted); font: 10px var(--jp-serif); letter-spacing: .12em; }
+    .social { color: var(--accent); border-bottom: 1px solid rgba(198,173,131,.5); padding-bottom: 3px; }
+    @media (max-width: 720px) {
+      .wrap { width: min(100% - 40px, var(--page)); }
+      .nav { min-height: 68px; }
+      .brand { font-size: 23px; }
+      .nav-links { gap: 16px; }
+      .nav-links a { font-size: 9px; letter-spacing: .1em; }
+      .hero { min-height: 690px; min-height: min(760px, calc(100svh - 68px)); }
+      .hero::after { width: 90vw; right: -42%; top: 43%; }
+      .hero-inner { padding-block: 90px 80px; }
+      h1 { font-size: clamp(62px, 15vw, 100px); }
+      .hero-bottom { margin-top: 60px; }
+      .section-head, .statement { grid-template-columns: 1fr; gap: 24px; }
+      .section-head { margin-bottom: 48px; }
+      .capabilities { grid-template-columns: 1fr; }
+      .capability, .capability + .capability { min-height: 0; padding: 28px 0 32px; border-left: 0; }
+      .capability + .capability { border-top: 1px solid var(--line); }
+      h3 { margin: 20px 0 10px; }
+      .statement { margin-top: 65px; padding-top: 30px; }
+      .footer-inner { align-items: flex-start; flex-direction: column; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav wrap" aria-label="Main navigation">
+      <a class="brand" href="#home" aria-label="Oyama142859 home">O<span>.</span></a>
+      <div class="nav-links">
+        <a href="#home" class="active">Home</a>
+        <a href="#capabilities">Capabilities</a>
+        <a class="contact-link" href="https://x.com/NESTAIDA59277" target="_blank" rel="noopener noreferrer">Contact ↗</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="hero-inner wrap">
+        <p class="eyebrow">Independent creator · Japan</p>
+        <h1>Oyama<span>142859</span></h1>
+        <p class="hero-copy">
+          A student exploring the possibilities of code, creativity, and technology.
+          I build things around Minecraft, experiment with ideas, and enjoy turning
+          complicated concepts into practical tools.
+        </p>
+        <div class="hero-bottom">
+          <span class="scroll-note">Scroll to explore</span>
+          <span class="location">BASED IN JAPAN</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section wrap" id="capabilities">
+      <div class="section-head">
+        <div>
+          <span class="section-index">01 / WHAT I DO</span>
+        </div>
+        <div>
+          <h2>Capabilities</h2>
+          <p class="section-intro">
+            My interests sit somewhere between software development, game systems,
+            and the communities built around them. I learn by making, testing, and
+            improving real projects.
+          </p>
+        </div>
+      </div>
+
+      <div class="capabilities">
+        <article class="capability">
+          <span class="cap-number">01</span>
+          <h3>Minecraft Development</h3>
+          <p>
+            Developing Minecraft mods, utilities, and supporting systems.
+            I mainly work with Java and explore ways to make gameplay and
+            server experiences more expressive.
+          </p>
+        </article>
+        <article class="capability">
+          <span class="cap-number">02</span>
+          <h3>AI-Assisted Engineering</h3>
+          <p>
+            I use tools such as ChatGPT throughout development — from exploring
+            technical approaches and prototyping to debugging and refining
+            implementations.
+          </p>
+        </article>
+        <article class="capability">
+          <span class="cap-number">03</span>
+          <h3>Transit & Community</h3>
+          <p>
+            An active participant in the Japanese Minecraft Transit Railway
+            community, with a particular interest in railway systems,
+            in-game infrastructure, and shared projects.
+          </p>
+        </article>
+      </div>
+
+      <div class="statement">
+        <span class="statement-label">A simple principle</span>
+        <p>Curiosity turns into ideas. Ideas turn into things that work.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner wrap">
+      <span class="footer-brand">Oyama142859</span>
+      <span class="footer-meta">© 2026 OYAMA142859</span>
+      <a class="footer-meta social" href="https://x.com/NESTAIDA59277" target="_blank" rel="noopener noreferrer">Find me on X ↗</a>
+    </div>
+  </footer>
+  <script>
+    const sections = document.querySelectorAll("#home, #capabilities");
+    const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          navLinks.forEach((link) => {
+            link.classList.toggle("active", link.getAttribute("href") === "#" + entry.target.id);
+          });
+        }
+      });
+    }, { rootMargin: "-35% 0px -55% 0px" });
+    sections.forEach((section) => observer.observe(section));
+  </script>
+</body>
+</html>
