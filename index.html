@@ -1,254 +1,125 @@
 <!doctype html>
-<html lang="en">
+<html lang="ja">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#10100f">
-  <meta name="description" content="Oyama142859 — student, Minecraft developer, and member of the Minecraft Transit Railway community in Japan.">
+  <meta name="theme-color" content="#f5f8f5">
+  <meta name="description" content="Oyama142859のポートフォリオ。MinecraftのMod開発、AIを活用した技術開発、Minecraft Transit Railwayの活動について紹介します。">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Oyama142859 — Independent Creator">
-  <meta property="og:description" content="Exploring code, Minecraft, and the systems that connect them.">
-  <title>Oyama142859 — Independent Creator</title>
+  <meta property="og:title" content="Oyama142859 | 山と水、そして技術">
+  <meta property="og:description" content="山のように深く、水のようにしなやかに。">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Noto+Serif+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      color-scheme: dark;
-      --bg: #10100f;
-      --surface: #171715;
-      --text: #e9e5dc;
-      --muted: #96938b;
-      --line: rgba(233,229,220,.14);
-      --accent: #c6ad83;
-      --serif: "Cormorant Garamond", "Noto Serif JP", Georgia, serif;
-      --jp-serif: "Noto Serif JP", serif;
-      --sans: "Noto Serif JP", Georgia, serif;
-      --page: 1180px;
-    }
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; scroll-padding-top: 100px; }
-    body {
-      margin: 0;
-      background:
-        radial-gradient(ellipse at 78% 12%, rgba(198,173,131,.075), transparent 34rem),
-        var(--bg);
-      color: var(--text);
-      font-family: var(--sans);
-      font-weight: 400;
-      line-height: 1.8;
-      -webkit-font-smoothing: antialiased;
-    }
-    a { color: inherit; text-decoration: none; }
-    a:focus-visible { outline: 1px solid var(--accent); outline-offset: 5px; }
-    .wrap { width: min(var(--page), calc(100% - 64px)); margin-inline: auto; }
-    .site-header {
-      position: sticky; top: 0; z-index: 10;
-      border-bottom: 1px solid var(--line);
-      background: rgba(16,16,15,.82);
-      backdrop-filter: blur(18px);
-    }
-    .nav {
-      min-height: 76px; display: flex; align-items: center;
-      justify-content: space-between; gap: 24px;
-    }
-    .brand { font: 600 25px/1 var(--serif); letter-spacing: .035em; }
-    .brand span { color: var(--accent); }
-    .nav-links { display: flex; align-items: center; gap: clamp(20px, 4vw, 48px); }
-    .nav-links a {
-      color: var(--muted); font: 500 11px/1.4 var(--jp-serif);
-      letter-spacing: .16em; text-transform: uppercase; transition: color .2s ease;
-    }
-    .nav-links a:hover, .nav-links a.active { color: var(--text); }
-    .nav-links .contact-link { color: var(--accent); }
-    .hero {
-      min-height: min(790px, calc(100svh - 76px));
-      display: grid; align-items: center; position: relative;
-      border-bottom: 1px solid var(--line); overflow: hidden;
-    }
-    .hero::after {
-      content: ""; position: absolute; width: min(54vw, 660px); aspect-ratio: 1;
-      right: -8%; top: 50%; transform: translateY(-50%);
-      border: 1px solid rgba(198,173,131,.15); border-radius: 50%;
-      box-shadow: 0 0 0 70px rgba(198,173,131,.018), 0 0 0 140px rgba(198,173,131,.014);
-      pointer-events: none;
-    }
-    .hero-inner { position: relative; z-index: 1; padding-block: 110px 130px; }
-    .eyebrow {
-      display: flex; align-items: center; gap: 14px; margin: 0 0 28px;
-      color: var(--accent); font: 500 11px/1.5 var(--jp-serif);
-      letter-spacing: .22em; text-transform: uppercase;
-    }
-    .eyebrow::before { content: ""; width: 34px; height: 1px; background: var(--accent); }
-    h1 {
-      max-width: 900px; margin: 0;
-      font: 400 clamp(66px, 10vw, 142px)/.92 var(--serif);
-      letter-spacing: -.045em;
-    }
-    h1 span { display: block; color: var(--accent); font-style: italic; }
-    .hero-copy {
-      max-width: 510px; margin: 38px 0 0; color: #b5b0a6;
-      font: 400 clamp(14px, 1.35vw, 16px)/2.1 var(--jp-serif);
-    }
-    .hero-bottom {
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 24px; margin-top: 82px;
-    }
-    .scroll-note { color: var(--muted); font: 10px var(--jp-serif); letter-spacing: .2em; text-transform: uppercase; }
-    .scroll-note::after { content: "  ↓"; color: var(--accent); }
-    .location { color: var(--muted); font: 11px var(--jp-serif); letter-spacing: .12em; }
-    section.content-section { padding-block: clamp(100px, 13vw, 176px); border-bottom: 1px solid var(--line); }
-    .section-head {
-      display: grid; grid-template-columns: 1fr 2fr; gap: 40px;
-      align-items: start; margin-bottom: 76px;
-    }
-    .section-index { color: var(--accent); font: 500 12px var(--serif); letter-spacing: .16em; }
-    h2 { margin: 0; font: 400 clamp(43px, 6vw, 76px)/1 var(--serif); letter-spacing: -.025em; }
-    .section-intro { max-width: 590px; margin: 25px 0 0; color: var(--muted); font: 400 14px/2.1 var(--jp-serif); }
-    .capabilities { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--line); }
-    .capability { padding: 34px 30px 20px 0; min-height: 265px; }
-    .capability + .capability { border-left: 1px solid var(--line); padding-left: 30px; }
-    .cap-number { color: var(--accent); font: 500 13px var(--serif); }
-    h3 { margin: 35px 0 15px; font: 500 29px/1.15 var(--serif); }
-    .capability p { max-width: 310px; margin: 0; color: var(--muted); font: 400 13px/2.05 var(--jp-serif); }
-    .statement {
-      margin-top: 100px; padding: 48px 0 0; border-top: 1px solid var(--line);
-      display: grid; grid-template-columns: 1fr 2fr; gap: 40px;
-    }
-    .statement-label { color: var(--accent); font: 11px var(--jp-serif); letter-spacing: .18em; text-transform: uppercase; }
-    .statement p { max-width: 700px; margin: 0; font: 400 clamp(23px, 3vw, 36px)/1.55 var(--serif); color: #d8d1c5; }
-    .footer { padding-block: 38px; }
-    .footer-inner { display: flex; justify-content: space-between; align-items: center; gap: 24px; }
-    .footer-brand { font: 500 22px var(--serif); }
-    .footer-meta { color: var(--muted); font: 10px var(--jp-serif); letter-spacing: .12em; }
-    .social { color: var(--accent); border-bottom: 1px solid rgba(198,173,131,.5); padding-bottom: 3px; }
-    @media (max-width: 720px) {
-      .wrap { width: min(100% - 40px, var(--page)); }
-      .nav { min-height: 68px; }
-      .brand { font-size: 23px; }
-      .nav-links { gap: 16px; }
-      .nav-links a { font-size: 9px; letter-spacing: .1em; }
-      .hero { min-height: 690px; min-height: min(760px, calc(100svh - 68px)); }
-      .hero::after { width: 90vw; right: -42%; top: 43%; }
-      .hero-inner { padding-block: 90px 80px; }
-      h1 { font-size: clamp(62px, 15vw, 100px); }
-      .hero-bottom { margin-top: 60px; }
-      .section-head, .statement { grid-template-columns: 1fr; gap: 24px; }
-      .section-head { margin-bottom: 48px; }
-      .capabilities { grid-template-columns: 1fr; }
-      .capability, .capability + .capability { min-height: 0; padding: 28px 0 32px; border-left: 0; }
-      .capability + .capability { border-top: 1px solid var(--line); }
-      h3 { margin: 20px 0 10px; }
-      .statement { margin-top: 65px; padding-top: 30px; }
-      .footer-inner { align-items: flex-start; flex-direction: column; }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      html { scroll-behavior: auto; }
-      *, *::before, *::after { transition-duration: .01ms !important; }
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <title>Oyama142859 | 山と水、そして技術</title>
 </head>
 <body>
   <header class="site-header">
-    <nav class="nav wrap" aria-label="Main navigation">
-      <a class="brand" href="#home" aria-label="Oyama142859 home">O<span>.</span></a>
+    <nav class="nav shell" aria-label="メインナビゲーション">
+      <a class="brand" href="#home" aria-label="Oyama142859 ホーム">
+        <img class="brand-icon" src="assets/brand-mark.svg" alt="">
+        <span>Oyama142859</span>
+      </a>
       <div class="nav-links">
-        <a href="#home" class="active">Home</a>
-        <a href="#capabilities">Capabilities</a>
-        <a class="contact-link" href="https://x.com/NESTAIDA59277" target="_blank" rel="noopener noreferrer">Contact ↗</a>
+        <a class="nav-link is-active" href="#home">ホーム</a>
+        <a class="nav-link" href="#capabilities">出来ること</a>
+        <a class="nav-contact" href="contact.html">CONTACT <span aria-hidden="true">↗</span></a>
       </div>
     </nav>
   </header>
 
   <main>
     <section class="hero" id="home">
-      <div class="hero-inner wrap">
-        <p class="eyebrow">Independent creator · Japan</p>
-        <h1>Oyama<span>142859</span></h1>
-        <p class="hero-copy">
-          A student exploring the possibilities of code, creativity, and technology.
-          I build things around Minecraft, experiment with ideas, and enjoy turning
-          complicated concepts into practical tools.
+      <div class="hero-copy shell">
+        <p class="eyebrow reveal"><span class="eyebrow-dot"></span> PERSONAL PORTFOLIO <span>— JAPAN</span></p>
+        <h1 class="hero-title">
+          <span class="title-line reveal">山のように深く、</span>
+          <span class="title-line title-accent reveal">水のようにしなやかに。</span>
+        </h1>
+        <p class="hero-description reveal">
+          はじめまして、<strong>Oyama142859</strong>です。<br>
+          学びながら、Minecraftを中心にプログラムや仕組みをつくっています。
         </p>
-        <div class="hero-bottom">
-          <span class="scroll-note">Scroll to explore</span>
-          <span class="location">BASED IN JAPAN</span>
-        </div>
+        <a class="scroll-cue reveal" href="#capabilities">
+          <span class="scroll-cue-line"></span>
+          <span>SCROLL TO EXPLORE</span>
+        </a>
+      </div>
+
+      <div class="landscape" aria-hidden="true">
+        <div class="sun"></div>
+        <svg class="mountain mountain-back" viewBox="0 0 1600 520" preserveAspectRatio="xMidYMax slice">
+          <path d="M0 360 170 220 270 292 455 90 600 260 760 135 920 300 1080 120 1230 275 1390 165 1600 345V520H0Z" fill="#dce9df"/>
+          <path d="m455 90 65 86-70-30-52 48zM1080 120l65 83-70-24-46 42z" fill="#f8fbf7" opacity=".92"/>
+        </svg>
+        <svg class="mountain mountain-front" viewBox="0 0 1600 430" preserveAspectRatio="xMidYMax slice">
+          <path d="M0 260 210 155 365 235 560 105 740 245 920 130 1110 255 1290 115 1450 225 1600 165V430H0Z" fill="#b8d3c1"/>
+          <path d="M0 320Q260 235 470 300T900 290T1300 280T1600 265V430H0Z" fill="#8ebca2"/>
+        </svg>
+        <svg class="river" viewBox="0 0 1600 330" preserveAspectRatio="none">
+          <path class="river-shadow" d="M610 0C690 85 480 120 630 185S900 245 760 330"/>
+          <path class="river-line" d="M610 0C690 85 480 120 630 185S900 245 760 330"/>
+          <path class="river-highlight" d="M610 0C690 85 480 120 630 185S900 245 760 330"/>
+        </svg>
+        <div class="foreground-hill"></div>
+      </div>
+      <div class="hero-caption shell" aria-hidden="true">
+        <span>01 — ABOUT</span><span>INSPIRED BY THE LANDSCAPE OF JAPAN</span>
       </div>
     </section>
 
-    <section class="content-section wrap" id="capabilities">
-      <div class="section-head">
-        <div>
-          <span class="section-index">01 / WHAT I DO</span>
-        </div>
-        <div>
-          <h2>Capabilities</h2>
-          <p class="section-intro">
-            My interests sit somewhere between software development, game systems,
-            and the communities built around them. I learn by making, testing, and
-            improving real projects.
-          </p>
-        </div>
+    <section class="about section shell" id="capabilities">
+      <div class="section-heading reveal">
+        <p class="section-kicker">02 / WHAT I DO</p>
+        <h2>興味を、かたちに。</h2>
+        <p class="section-lead">技術を学び、試し、少しずつ実際に動くものへ。<br>現在取り組んでいることを紹介します。</p>
       </div>
 
-      <div class="capabilities">
-        <article class="capability">
-          <span class="cap-number">01</span>
-          <h3>Minecraft Development</h3>
-          <p>
-            Developing Minecraft mods, utilities, and supporting systems.
-            I mainly work with Java and explore ways to make gameplay and
-            server experiences more expressive.
-          </p>
+      <div class="activity-list">
+        <article class="activity reveal">
+          <span class="activity-number">01</span>
+          <div class="activity-body">
+            <h3>Minecraft 開発</h3>
+            <p>主にMinecraft向けのModや、ゲームプレイを支える補助ツール・仕組みを開発しています。Javaを中心に、アイデアを実際に動く機能へ落とし込むことに取り組んでいます。</p>
+          </div>
+          <span class="activity-mark" aria-hidden="true">↗</span>
         </article>
-        <article class="capability">
-          <span class="cap-number">02</span>
-          <h3>AI-Assisted Engineering</h3>
-          <p>
-            I use tools such as ChatGPT throughout development — from exploring
-            technical approaches and prototyping to debugging and refining
-            implementations.
-          </p>
+        <article class="activity reveal">
+          <span class="activity-number">02</span>
+          <div class="activity-body">
+            <h3>AIとソフトウェア開発</h3>
+            <p>ChatGPTなどのAIを開発パートナーとして活用。設計の検討、実装、デバッグ、改善を繰り返しながら、技術的な課題の解決に挑戦しています。</p>
+          </div>
+          <span class="activity-mark" aria-hidden="true">↗</span>
         </article>
-        <article class="capability">
-          <span class="cap-number">03</span>
-          <h3>Transit & Community</h3>
-          <p>
-            An active participant in the Japanese Minecraft Transit Railway
-            community, with a particular interest in railway systems,
-            in-game infrastructure, and shared projects.
-          </p>
+        <article class="activity reveal">
+          <span class="activity-number">03</span>
+          <div class="activity-body">
+            <h3>Minecraft Transit Railway</h3>
+            <p>Minecraft Transit Railway（MTR）の日本コミュニティに積極的に参加しています。鉄道システムや駅・路線づくり、関連技術など、交通をテーマにした活動に関心があります。</p>
+          </div>
+          <span class="activity-mark" aria-hidden="true">↗</span>
         </article>
       </div>
+    </section>
 
-      <div class="statement">
-        <span class="statement-label">A simple principle</span>
-        <p>Curiosity turns into ideas. Ideas turn into things that work.</p>
+    <section class="closing">
+      <div class="closing-inner shell reveal">
+        <p class="section-kicker">03 / KEEP EXPLORING</p>
+        <p class="closing-copy">好奇心を出発点に、<br><span>まだないものをつくる。</span></p>
+        <a class="text-link" href="contact.html">SNS・連絡先を見る <span aria-hidden="true">↗</span></a>
       </div>
+      <div class="closing-wave" aria-hidden="true"></div>
     </section>
   </main>
 
-  <footer class="footer">
-    <div class="footer-inner wrap">
-      <span class="footer-brand">Oyama142859</span>
-      <span class="footer-meta">© 2026 OYAMA142859</span>
-      <a class="footer-meta social" href="https://x.com/NESTAIDA59277" target="_blank" rel="noopener noreferrer">Find me on X ↗</a>
-    </div>
+  <footer class="footer shell">
+    <a class="footer-brand" href="#home">Oyama142859</a>
+    <span>© <span id="year">2026</span> Oyama142859</span>
+    <a href="contact.html">CONTACT ↗</a>
   </footer>
-  <script>
-    const sections = document.querySelectorAll("#home, #capabilities");
-    const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          navLinks.forEach((link) => {
-            link.classList.toggle("active", link.getAttribute("href") === "#" + entry.target.id);
-          });
-        }
-      });
-    }, { rootMargin: "-35% 0px -55% 0px" });
-    sections.forEach((section) => observer.observe(section));
-  </script>
+  <script src="script.js" defer></script>
 </body>
 </html>
