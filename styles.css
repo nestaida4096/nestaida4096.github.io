@@ -89,7 +89,7 @@ a:focus-visible { outline: 2px solid var(--blue); outline-offset: 5px; }
 .social-icon-wrap { width: 48px; height: 48px; min-width: 48px; max-width: 48px; flex: 0 0 48px; display: flex; align-items: center; justify-content: center; overflow: hidden; transition: transform .3s ease; }
 .social-logo { display: block; width: 40px !important; height: 40px !important; max-width: 40px !important; max-height: 40px !important; object-fit: contain; flex: 0 0 40px; }
 .social-logo-x { width: 40px !important; height: 40px !important; }
-.social-logo-misskey { width: 40px !important; height: 40px !important; border-radius: 9px; }
+.social-logo-misskey { width: 40px !important; height: 40px !important; object-fit: contain; }
 .social-name { display: flex; flex-direction: column; gap: 3px; }
 .social-name strong { font-size: 16px; }
 .social-name small { color: var(--muted); font-size: 11px; }
