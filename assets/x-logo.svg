@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img" aria-labelledby="title">
-  <title id="title">X</title>
-  <path fill="#20352d" d="M18.901 1.153h3.68l-8.04 9.19L24 23.213h-7.406l-5.8-7.584-6.64 7.584H.47l8.6-9.83L0 1.153h7.594l5.24 6.93zm-1.29 19.8h2.04L6.48 3.29H4.29z"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" aria-labelledby="title" role="img">
+<title id="title">X</title>
+<path fill="#20352d" d="M18.901 1.153h3.68l-8.04 9.19L24 23.213h-7.406l-5.8-7.584-6.64 7.584H.47l8.6-9.83L0 1.153h7.594l5.24 6.93zm-1.29 19.8h2.04L6.48 3.29H4.29z"/>
 </svg>
